@@ -1,35 +1,191 @@
 import { useState, useEffect, useRef } from 'react'
 
 // ─────────────────────────────────────────────
+// DATA
+// ─────────────────────────────────────────────
+
+const LOCATIONS = [
+  {
+    name: 'CBD Kratom Chelsea',
+    address: '354 W 14th St, New York, NY 10014',
+    phone: '9172614294',
+    phoneDisplay: '(917) 261-4294',
+    hours: 'Open 8am – 10pm · 7 days a week',
+    delivery: 'Local Delivery 9am – 9pm',
+    mapsQuery: 'CBD+Kratom+Chelsea',
+    mapsPlaceId: 'ChIJs6TKgJRZwokR5EULmGQsIv0',
+    reviewUrl: 'https://g.page/r/CeRFC5hkLCL9EAI/review',
+    infoUrl: 'https://shopcbdkratom.com/pages/chelsea',
+  },
+  {
+    name: 'CBD Kratom Lenox Hill',
+    address: '794 Lexington Ave, New York, NY 10065',
+    phone: '9174090552',
+    phoneDisplay: '(917) 409-0552',
+    hours: 'Open 8am – 10pm · 7 days a week',
+    delivery: 'Local Delivery 9am – 9pm',
+    mapsQuery: 'CBD+Kratom+Lenox+Hill',
+    mapsPlaceId: 'ChIJd4cpYM9ZwokRvz5QioX4qAY',
+    reviewUrl: 'https://g.page/r/Cb8-UIqF-KgGEAI/review',
+    infoUrl: 'https://shopcbdkratom.com/pages/lenox-hill',
+  },
+  {
+    name: 'CBD Kratom Flatiron District',
+    address: '168 5th Ave, New York, NY 10010',
+    phone: '6466660150',
+    phoneDisplay: '(646) 666-0150',
+    hours: 'Open 8am – 10pm · 7 days a week',
+    delivery: 'Local Delivery 9am – 9pm',
+    mapsQuery: 'CBD+Kratom+Flatiron+District',
+    mapsPlaceId: 'ChIJX01B45xZwokRl8NkZuN1G80',
+    reviewUrl: 'https://g.page/r/CZfDZGbjdRvNEAI/review',
+    infoUrl: 'https://shopcbdkratom.com/pages/flatiron-ny',
+  },
+  {
+    name: 'CBD Kratom Midtown – Times Square',
+    address: '1420 Broadway, New York, NY 10018',
+    phone: '6464541267',
+    phoneDisplay: '(646) 454-1267',
+    hours: 'Open 8am – 10pm · 7 days a week',
+    delivery: 'Local Delivery 9am – 9pm',
+    mapsQuery: 'CBD+Kratom+Midtown+-+Times+Square',
+    mapsPlaceId: 'ChIJ70grUF9ZwokRaSAGrmIPeSE',
+    reviewUrl: 'https://g.page/r/CWkgBq5iD3khEAI/review',
+    infoUrl: 'https://shopcbdkratom.com/pages/times-square-midtown-new-york',
+  },
+  {
+    name: 'CBD Kratom Upper West Side',
+    address: '2039 B Broadway, New York, NY 10023',
+    phone: '9174092598',
+    phoneDisplay: '(917) 409-2598',
+    hours: 'Open 8am – 10pm · 7 days a week',
+    delivery: 'Local Delivery 9am – 9pm',
+    mapsQuery: 'CBD+Kratom+Upper+West+Side',
+    mapsPlaceId: 'ChIJEYEpr99ZwokRvzidvdITXR4',
+    reviewUrl: 'https://g.page/r/Cb84nb3SE10eEAI/review',
+    infoUrl: 'https://shopcbdkratom.com/pages/upper-west-side',
+  },
+  {
+    name: 'CBD Kratom Financial District',
+    address: '141 Fulton St, New York, NY 10038',
+    phone: '6465901440',
+    phoneDisplay: '(646) 590-1440',
+    hours: 'Open 8am – 10pm · 7 days a week',
+    delivery: 'Local Delivery 9am – 9pm',
+    mapsQuery: 'CBD+Kratom+Financial+District',
+    mapsPlaceId: 'ChIJ3yuH_kpbwokRNIQHMm_uYbg',
+    reviewUrl: 'https://g.page/r/CTSEBzJv7mG4EAI/review',
+    infoUrl: 'https://shopcbdkratom.com/pages/financial-district',
+  },
+  {
+    name: 'CBD Kratom SoHo',
+    address: '161 6th Ave, New York, NY 10013',
+    phone: '6465245790',
+    phoneDisplay: '(646) 524-5790',
+    hours: 'Open 8am – 10pm · 7 days a week',
+    delivery: 'Local Delivery 9am – 9pm',
+    mapsQuery: 'CBD+Kratom+SoHo',
+    mapsPlaceId: 'ChIJfceh771ZwokRxpdR87FJNME',
+    reviewUrl: 'https://g.page/r/CcaXUfOxSTTBEAI/review',
+    infoUrl: 'https://shopcbdkratom.com/pages/soho-new-york',
+  },
+  {
+    name: 'CBD Kratom Upper East Side',
+    address: '1562 3rd Ave, New York, NY 10128',
+    phone: '6464788450',
+    phoneDisplay: '(646) 478-8450',
+    hours: 'Open 8am – 10pm · 7 days a week',
+    delivery: 'Local Delivery 9am – 9pm',
+    mapsQuery: 'CBD+Kratom+Upper+East+Side',
+    mapsPlaceId: 'ChIJv0HwJi1ZwokRe3cNmSiLG0U',
+    reviewUrl: 'https://g.page/r/CXt3DZkoixtFEAI/review',
+    infoUrl: 'https://shopcbdkratom.com/pages/upper-east-side',
+  },
+  {
+    name: 'CBD Kratom NoHo @ 0 Bond',
+    address: '670 Broadway, New York, NY 10012',
+    phone: '9298779552',
+    phoneDisplay: '(929) 877-9552',
+    hours: 'Open 9am – 9pm · 7 days a week',
+    delivery: 'Local Delivery 9am – 9pm',
+    mapsQuery: 'CBD+Kratom+NoHo+%40+0+Bond',
+    mapsPlaceId: 'ChIJ2XDdmsdZwokRraoquNtu2_Q',
+    reviewUrl: 'https://g.page/r/Ca2qKrjbbtv0EAI/review',
+    infoUrl: 'https://shopcbdkratom.com/pages/noho-new-york',
+  },
+  {
+    name: 'CBD Kratom Downtown Brooklyn',
+    address: '55 Court St, Brooklyn, NY 11201',
+    phone: '9295547770',
+    phoneDisplay: '(929) 554-7770',
+    hours: 'Open 8am – 10pm · 7 days a week',
+    delivery: 'Local Delivery 9am – 9pm',
+    mapsQuery: 'CBD+Kratom+Downtown+Brooklyn',
+    mapsPlaceId: 'ChIJSa0f0N1bwokRnUNPVDDHM7U',
+    reviewUrl: 'https://g.page/r/CZ1DT1QwxzO1EAI/review',
+    infoUrl: 'https://shopcbdkratom.com/pages/downtown-brooklyn-ny',
+  },
+  {
+    name: 'CBD Kratom Williamsburg',
+    address: '191 Bedford Ave, Brooklyn, NY 11211',
+    phone: '3477213503',
+    phoneDisplay: '(347) 721-3503',
+    hours: 'Open 8am – 10pm · 7 days a week',
+    delivery: 'Local Delivery 9am – 9pm',
+    mapsQuery: 'CBD+Kratom+Williamsburg',
+    mapsPlaceId: 'ChIJnUjny7RZwokRg2Z-Kd48CYA',
+    reviewUrl: 'https://g.page/r/CYNmfinePAmAEAI/review',
+    infoUrl: 'https://shopcbdkratom.com/pages/williamsburg',
+  },
+  {
+    name: 'CBD Kratom Forest Hills',
+    address: '70-09 Austin St, Forest Hills, NY 11375',
+    phone: '3479607028',
+    phoneDisplay: '(347) 960-7028',
+    hours: 'Open 8am – 10pm · 7 days a week',
+    delivery: 'Local Delivery 9am – 9pm',
+    mapsQuery: 'CBD+Kratom+Forest+Hills',
+    mapsPlaceId: 'ChIJQVwWf5tfwokR9tURhyqpjtc',
+    reviewUrl: 'https://g.page/r/CfbVEYcqqY7XEAI/review',
+    infoUrl: 'https://shopcbdkratom.com/pages/forest-hills',
+  },
+]
+
+const FAQS = [
+  {
+    q: 'Where Can I Buy CBD and Kratom in NYC?',
+    a: 'CBD Kratom has 12 retail stores across NYC — 9 in Manhattan, 2 in Brooklyn, and 1 in Queens. All locations are listed above with addresses, hours, and directions.',
+  },
+  {
+    q: 'Is Kratom Legal in New York?',
+    a: 'Yes. Kratom is legal in New York State, including all five boroughs. All products are 3rd-party lab tested for potency and purity.',
+  },
+  {
+    q: 'Does CBD Kratom Offer Delivery in NYC?',
+    a: 'Yes! Every NYC location offers local delivery 9am–9pm, 7 days a week. Plus free shipping on orders over $100 when you shop online.',
+  },
+  {
+    q: "What Are CBD Kratom's Store Hours in NYC?",
+    a: 'Most stores are open 8am to 10pm, 7 days a week. NoHo @ 0 Bond operates 9am to 9pm.',
+  },
+  {
+    q: "Can I Visit If I'm New to CBD or Kratom?",
+    a: 'Absolutely. Our NYC staff specializes in helping first-time shoppers navigate CBD, Kratom, Delta-8, Delta-9, and more. No question is too basic.',
+  },
+]
+
+const BARCODE_URL = 'https://shopcbdkratom.com/cdn/shop/files/Barcode-1.png?v=1772826261'
+
+// ─────────────────────────────────────────────
 // HOOKS
 // ─────────────────────────────────────────────
 
-function useCountdown() {
-  const getTimeLeft = () => {
-    const now = new Date()
-    const end = new Date()
-    end.setHours(23, 59, 59, 0)
-    const diff = Math.max(end - now, 0)
-    return {
-      hours: Math.floor(diff / (1000 * 60 * 60)),
-      minutes: Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)),
-      seconds: Math.floor((diff % (1000 * 60)) / 1000),
-    }
-  }
-  const [time, setTime] = useState(getTimeLeft())
-  useEffect(() => {
-    const t = setInterval(() => setTime(getTimeLeft()), 1000)
-    return () => clearInterval(t)
-  }, [])
-  return time
-}
-
-function useReveal(threshold = 0.1) {
+function useReveal(threshold = 0.08) {
   const ref = useRef(null)
   const [visible, setVisible] = useState(false)
   useEffect(() => {
     const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setVisible(true) },
+      ([e]) => { if (e.isIntersecting) setVisible(true) },
       { threshold }
     )
     if (ref.current) obs.observe(ref.current)
@@ -39,30 +195,59 @@ function useReveal(threshold = 0.1) {
 }
 
 // ─────────────────────────────────────────────
+// ICONS
+// ─────────────────────────────────────────────
+
+const DownloadIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+    <polyline points="7 10 12 15 17 10"/>
+    <line x1="12" y1="15" x2="12" y2="3"/>
+  </svg>
+)
+
+const PrintIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <polyline points="6 9 6 2 18 2 18 9"/>
+    <path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/>
+    <rect x="6" y="14" width="12" height="8"/>
+  </svg>
+)
+
+const MapPinIcon = () => (
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{display:'inline',verticalAlign:'middle',marginRight:4,flexShrink:0}}>
+    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+    <circle cx="12" cy="10" r="3"/>
+  </svg>
+)
+
+const ClockIcon = () => (
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{display:'inline',verticalAlign:'middle',marginRight:4,flexShrink:0}}>
+    <circle cx="12" cy="12" r="10"/>
+    <polyline points="12 6 12 12 16 14"/>
+  </svg>
+)
+
+const TruckIcon = () => (
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{display:'inline',verticalAlign:'middle',marginRight:4,flexShrink:0}}>
+    <rect x="1" y="3" width="15" height="13" rx="1"/>
+    <path d="M16 8h4l3 3v5h-7V8z"/>
+    <circle cx="5.5" cy="18.5" r="2.5"/>
+    <circle cx="18.5" cy="18.5" r="2.5"/>
+  </svg>
+)
+
+// ─────────────────────────────────────────────
 // ANNOUNCEMENT BAR
 // ─────────────────────────────────────────────
 
 function AnnouncementBar() {
-  const { hours, minutes, seconds } = useCountdown()
-  const pad = (n) => String(n).padStart(2, '0')
-
   return (
-    <div className="ann-bar">
-      <div className="ann-inner">
-        <span className="ann-statue">🗽</span>
-        <span className="ann-text">
-          Welcome back, New York! Enjoy{' '}
-          <strong className="ann-strong">20% OFF</strong> your entire order.
-          &nbsp;Use code:{' '}
-          <span className="ann-code">NYBACK20</span>
-        </span>
-        <span className="ann-countdown">
-          Offer expires:{' '}
-          <span className="ann-time">
-            {pad(hours)}:{pad(minutes)}:{pad(seconds)}
-          </span>
-        </span>
-      </div>
+    <div className="ann">
+      <p className="ann-text">
+        <strong>FREE SHIPPING</strong> on orders $100+
+        &nbsp;·&nbsp; Exclusions Apply
+      </p>
     </div>
   )
 }
@@ -74,75 +259,56 @@ function AnnouncementBar() {
 function Nav() {
   return (
     <nav className="nav">
-      <div className="nav-inner">
-        <div className="nav-brand">
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path d="M14 2C14 2 6 8 6 16C6 20.4183 9.58172 24 14 24C18.4183 24 22 20.4183 22 16C22 8 14 2 14 2Z" fill="#1C3A22"/>
-            <path d="M14 8C14 8 9 12 9 17C9 19.7614 11.2386 22 14 22C16.7614 22 19 19.7614 19 17C19 12 14 8 14 8Z" fill="#C9A84C" opacity="0.85"/>
-            <path d="M14 12V24" stroke="#1C3A22" strokeWidth="1.5" strokeLinecap="round"/>
-          </svg>
-          <span className="nav-logo-text">CBD Kratom</span>
-        </div>
-        <a
-          href="https://shopcbdkratom.com/collections"
-          className="nav-shop-btn"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Shop Now
-        </a>
-      </div>
+      <a href="https://shopcbdkratom.com" target="_blank" rel="noopener noreferrer" className="nav-brand" aria-label="CBD Kratom Home">
+        <img
+          src="https://shopcbdkratom.com/cdn/shop/files/logo-white.png?v=1716393204&width=400"
+          alt="CBD Kratom"
+          className="nav-logo"
+          loading="eager"
+        />
+      </a>
+      <a href="https://shopcbdkratom.com/collections/all" target="_blank" rel="noopener noreferrer" className="nav-shop-link">
+        Shop Online
+      </a>
     </nav>
   )
 }
 
 // ─────────────────────────────────────────────
-// HERO WINBACK
+// HERO
 // ─────────────────────────────────────────────
 
-function HeroWinback() {
-  const [ref, visible] = useReveal(0.05)
+function Hero() {
+  const [ref, visible] = useReveal(0.01)
 
   return (
     <section className="hero" ref={ref}>
-      <div className="hero-noise" />
-      <div className="hero-radial" />
-      <div className="hero-fade-bottom" />
+      {/* Hero image fills the background */}
+      <div className="hero-img-wrap" aria-hidden="true">
+        <img src="/hero.webp" alt="" className="hero-img" />
+      </div>
+      <div className="hero-overlay" aria-hidden="true" />
 
       <div className={`hero-content${visible ? ' is-visible' : ''}`}>
-        <div className="hero-badge">
-          <span className="hero-badge-dot" />
-          Exclusive Offer &nbsp;·&nbsp; New York City
-        </div>
+        <p className="hero-eyebrow">Exclusive In-Store Offer &nbsp;·&nbsp; New York City</p>
 
-        <h1 className="hero-h1">
-          New York, It's Been
-          <br />a While. We've Missed You.
-        </h1>
+        <h1 className="hero-h1">New York, We Miss You.</h1>
 
-        <p className="hero-sub">
-          Your wellness routine shouldn't miss a beat. Welcome back to CBD
-          Kratom! To celebrate your return, we're giving you an exclusive{' '}
-          <strong>20% off</strong> your next order. Rediscover your favorite
-          strains, explore our newest CBD arrivals, and find your perfect balance
-          today.
+        <p className="hero-body">
+          We miss you. Come in and redeem your exclusive offer at any participating
+          New York CBD Kratom location.
         </p>
 
-        <div className="hero-actions">
-          <a
-            href="https://shopcbdkratom.com/collections"
-            className="btn-gold"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Shop the NY Collection
-            <span className="btn-arrow">→</span>
-          </a>
+        <div className="offer-pill">
+          <div className="offer-pill-text">
+            <p className="offer-pill-title">Dogg Lbs Laid-Back Lollipops: <strong>$15</strong></p>
+            <p className="offer-pill-sub">Regularly $22. Save $7.</p>
+          </div>
         </div>
 
-        <p className="hero-footnote">
-          Discount automatically applied at checkout &nbsp;·&nbsp; or use code{' '}
-          <strong>NYBACK20</strong>
+        <p className="hero-fine">
+          Valid in-store only at participating New York City CBD Kratom locations.
+          Present barcode at checkout. One redemption per customer. Cannot be combined with other offers.
         </p>
       </div>
     </section>
@@ -150,228 +316,145 @@ function HeroWinback() {
 }
 
 // ─────────────────────────────────────────────
-// VALUE PROPS
+// BARCODE
 // ─────────────────────────────────────────────
 
-const VALUE_PROPS = [
-  {
-    svg: (
-      <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="4" y="14" width="34" height="22" rx="3" stroke="#1C3A22" strokeWidth="2.2"/>
-        <path d="M38 20h4a2 2 0 012 2v8a2 2 0 01-2 2h-4" stroke="#C9A84C" strokeWidth="2.2" strokeLinecap="round"/>
-        <circle cx="13" cy="40" r="3.5" stroke="#1C3A22" strokeWidth="2.2"/>
-        <circle cx="29" cy="40" r="3.5" stroke="#1C3A22" strokeWidth="2.2"/>
-        <path d="M9.5 40H4M16.5 40H25.5M32.5 40H38" stroke="#1C3A22" strokeWidth="2.2" strokeLinecap="round"/>
-        <path d="M14 19v8M20 17v10M26 21v6" stroke="#C9A84C" strokeWidth="2" strokeLinecap="round"/>
-      </svg>
-    ),
-    title: 'Fast Shipping to NY',
-    body: 'Get your wellness essentials delivered quickly and discreetly right to your door.',
-  },
-  {
-    svg: (
-      <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M18 8h12v6l4 4v18a2 2 0 01-2 2H16a2 2 0 01-2-2V18l4-4V8z" stroke="#1C3A22" strokeWidth="2.2" strokeLinejoin="round"/>
-        <circle cx="24" cy="28" r="6" stroke="#C9A84C" strokeWidth="2.2"/>
-        <path d="M24 22v-6M21.5 25.5l-4-4M26.5 25.5l4-4" stroke="#C9A84C" strokeWidth="2" strokeLinecap="round"/>
-        <circle cx="24" cy="28" r="2" fill="#C9A84C"/>
-      </svg>
-    ),
-    title: 'Lab-Tested Purity',
-    body: 'Every product is third-party lab tested to guarantee potency, quality, and peace of mind.',
-  },
-  {
-    svg: (
-      <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M24 6C24 6 12 14 12 26C12 32.627 17.373 38 24 38C30.627 38 36 32.627 36 26C36 14 24 6 24 6Z" stroke="#1C3A22" strokeWidth="2.2" strokeLinejoin="round"/>
-        <path d="M24 14C24 14 17 19 17 26C17 29.866 20.134 33 24 33C27.866 33 31 29.866 31 26C31 19 24 14 24 14Z" fill="#C9A84C" fillOpacity="0.25" stroke="#C9A84C" strokeWidth="1.8" strokeLinejoin="round"/>
-        <path d="M24 14V38" stroke="#1C3A22" strokeWidth="2" strokeLinecap="round"/>
-        <path d="M20 21C21.5 22.5 22.5 24 24 24" stroke="#1C3A22" strokeWidth="1.8" strokeLinecap="round"/>
-        <path d="M28 18C26.5 19.5 25.5 21 24 22" stroke="#1C3A22" strokeWidth="1.8" strokeLinecap="round"/>
-      </svg>
-    ),
-    title: 'Premium Sourcing',
-    body: 'We source only the highest quality, pure ingredients for all our CBD and Kratom lines.',
-  },
-]
-
-function ValueProps() {
+function BarcodeSection() {
   const [ref, visible] = useReveal(0.1)
+  const [saved, setSaved] = useState(false)
 
-  return (
-    <section className="vp-section" ref={ref}>
-      <div className="container">
-        <h2 className={`section-h2${visible ? ' is-visible' : ''}`}>
-          The CBD Kratom Standard
-        </h2>
+  const handleSave = async () => {
+    try {
+      const response = await fetch(BARCODE_URL)
+      const blob = await response.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'CBDK-Exclusive-Barcode.png'
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+      setSaved(true)
+      setTimeout(() => setSaved(false), 2500)
+    } catch {
+      window.open(BARCODE_URL, '_blank')
+    }
+  }
 
-        <div className="vp-grid">
-          {VALUE_PROPS.map((vp, i) => (
-            <div
-              key={i}
-              className={`vp-card${visible ? ' is-visible' : ''}`}
-              style={{ '--delay': `${i * 0.14}s` }}
-            >
-              <div className="vp-icon-wrap">{vp.svg}</div>
-              <h3 className="vp-title">{vp.title}</h3>
-              <p className="vp-body">{vp.body}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-// ─────────────────────────────────────────────
-// PRODUCT GRID
-// ─────────────────────────────────────────────
-
-const PRODUCTS = [
-  {
-    name: 'Premium Maeng Da Kratom Powder',
-    price: '$19.95',
-    reviews: 124,
-    tag: 'Best Seller',
-    hue: '140, 58%, 18%',
-    icon: '🌿',
-    url: 'https://shopcbdkratom.com/collections/kratom',
-  },
-  {
-    name: 'Green Malay Kratom Capsules',
-    price: '$24.95',
-    reviews: 98,
-    tag: 'Top Rated',
-    hue: '148, 44%, 24%',
-    icon: '💊',
-    url: 'https://shopcbdkratom.com/collections/kratom',
-  },
-  {
-    name: 'Full Spectrum CBD Oil 1000mg',
-    price: '$49.95',
-    reviews: 203,
-    tag: 'Staff Pick',
-    hue: '130, 50%, 20%',
-    icon: '💧',
-    url: 'https://shopcbdkratom.com/collections/tinctures-extracts',
-  },
-  {
-    name: 'Red Bali Kratom Powder',
-    price: '$17.95',
-    reviews: 87,
-    tag: null,
-    hue: '10, 55%, 22%',
-    icon: '🌺',
-    url: 'https://shopcbdkratom.com/collections/kratom',
-  },
-  {
-    name: 'CBD Gummies 25mg',
-    price: '$34.95',
-    reviews: 156,
-    tag: 'New Arrival',
-    hue: '30, 60%, 22%',
-    icon: '🍬',
-    url: 'https://shopcbdkratom.com/collections/edibles',
-  },
-  {
-    name: 'White Borneo Kratom Powder',
-    price: '$19.95',
-    reviews: 72,
-    tag: null,
-    hue: '165, 45%, 22%',
-    icon: '✨',
-    url: 'https://shopcbdkratom.com/collections/kratom',
-  },
-]
-
-function StarRating({ count = 5 }) {
-  return (
-    <span className="stars" aria-label={`${count} out of 5 stars`}>
-      {'★'.repeat(count)}
-      {'☆'.repeat(5 - count)}
-    </span>
-  )
-}
-
-function ProductCard({ product, index, visible }) {
-  const [added, setAdded] = useState(false)
-
-  const handleAdd = () => {
-    setAdded(true)
-    setTimeout(() => setAdded(false), 1600)
+  const handlePrint = () => {
+    const win = window.open('', '_blank')
+    win.document.write(`
+      <html>
+        <head>
+          <title>Your Exclusive Offer – CBD Kratom NYC</title>
+          <style>
+            body { margin: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; background: #fff; font-family: sans-serif; }
+            img { max-width: 480px; width: 90%; margin-bottom: 16px; }
+            p { text-align: center; font-size: 14px; color: #444; max-width: 380px; line-height: 1.5; }
+          </style>
+        </head>
+        <body>
+          <img src="${BARCODE_URL}" alt="Exclusive Barcode" />
+          <p>Present at checkout at any participating NYC CBD Kratom location.<br/>One redemption per customer.</p>
+          <script>window.onload = () => { window.print(); }<\/script>
+        </body>
+      </html>
+    `)
+    win.document.close()
   }
 
   return (
-    <article
-      className={`product-card${visible ? ' is-visible' : ''}`}
-      style={{ '--delay': `${index * 0.07}s` }}
-    >
-      {product.tag && (
-        <span className="product-badge">{product.tag}</span>
-      )}
+    <section className="bc-section">
+      <div className={`bc-card${visible ? ' is-visible' : ''}`} ref={ref}>
+        <span className="bc-badge">Your Exclusive Offer</span>
 
-      <div
-        className="product-img"
-        style={{
-          background: `linear-gradient(145deg, hsl(${product.hue}) 0%, hsl(${product.hue} / 0.75) 100%)`,
-        }}
-      >
-        <span className="product-img-icon" role="img">{product.icon}</span>
-        <div className="product-img-sheen" />
-      </div>
+        <p className="bc-title">Show this barcode at checkout</p>
 
-      <div className="product-body">
-        <h3 className="product-name">{product.name}</h3>
-        <div className="product-meta">
-          <StarRating />
-          <span className="product-review-count">{product.reviews} Reviews</span>
+        <div className="bc-img-wrap">
+          <img
+            src={BARCODE_URL}
+            alt="Exclusive discount barcode — present at checkout"
+            className="bc-img"
+            loading="lazy"
+          />
         </div>
-        <div className="product-footer">
-          <span className="product-price">{product.price}</span>
-          <button
-            className={`btn-cart${added ? ' btn-cart--added' : ''}`}
-            onClick={handleAdd}
-            aria-label={`Add ${product.name} to cart`}
-          >
-            {added ? (
-              <>
-                <span className="btn-cart-check">✓</span> Added
-              </>
+
+        <div className="bc-actions">
+          <button className="bc-btn bc-btn--primary" onClick={handleSave}>
+            {saved ? (
+              <><span>✓</span>&nbsp; Saved!</>
             ) : (
-              'Add to Cart'
+              <><DownloadIcon />&nbsp; Save Barcode</>
             )}
           </button>
+          <button className="bc-btn bc-btn--secondary" onClick={handlePrint}>
+            <PrintIcon />&nbsp; Print
+          </button>
         </div>
+
+        <p className="bc-fine">Present this barcode at checkout at any participating NYC location</p>
       </div>
-    </article>
+    </section>
   )
 }
 
-function ProductGrid() {
-  const [ref, visible] = useReveal(0.05)
+// ─────────────────────────────────────────────
+// LOCATIONS
+// ─────────────────────────────────────────────
+
+function LocationCard({ loc, index, visible }) {
+  const mapsSearch = `https://www.google.com/maps/search/?api=1&query=${loc.mapsQuery}&query_place_id=${loc.mapsPlaceId}`
+  const mapsDir = `https://www.google.com/maps/dir/?api=1&destination=${loc.mapsQuery}&destination_place_id=${loc.mapsPlaceId}`
 
   return (
-    <section className="pg-section" ref={ref}>
-      <div className="container">
-        <h2 className={`section-h2${visible ? ' is-visible' : ''}`}>
-          Trending Now in New York
-        </h2>
-        <p
-          className={`section-lead${visible ? ' is-visible' : ''}`}
-          style={{ '--delay': '0.1s' }}
-        >
-          Not sure where to start? Check out what other NY locals are adding to
-          their carts right now.
-        </p>
+    <div
+      className={`loc-card${visible ? ' is-visible' : ''}`}
+      style={{ '--delay': `${Math.min(index, 8) * 0.055}s` }}
+    >
+      <div className="loc-status">
+        <span className="loc-open-dot" aria-hidden="true" />
+        <span className="loc-open-text">Open</span>
+      </div>
 
-        <div className="pg-grid">
-          {PRODUCTS.map((product, i) => (
-            <ProductCard
-              key={product.name}
-              product={product}
-              index={i}
-              visible={visible}
-            />
+      <h3 className="loc-name">{loc.name}</h3>
+
+      <a href={mapsSearch} target="_blank" rel="noopener noreferrer" className="loc-address">
+        <MapPinIcon /> {loc.address}
+      </a>
+
+      <p className="loc-meta">
+        <ClockIcon /> {loc.hours}
+      </p>
+      <p className="loc-meta">
+        <TruckIcon /> {loc.delivery}
+      </p>
+
+      <div className="loc-actions">
+        <a href={`tel:${loc.phone}`} className="loc-btn loc-btn--outline">Call</a>
+        <a href={mapsDir} target="_blank" rel="noopener noreferrer" className="loc-btn loc-btn--outline">Directions</a>
+        <a href={loc.reviewUrl} target="_blank" rel="noopener noreferrer" className="loc-btn loc-btn--outline">Review</a>
+        <a href={loc.infoUrl} target="_blank" rel="noopener noreferrer" className="loc-btn loc-btn--green">More Info</a>
+      </div>
+    </div>
+  )
+}
+
+function LocationsSection() {
+  const [ref, visible] = useReveal(0.03)
+
+  return (
+    <section className="locs-section" ref={ref}>
+      <div className="container">
+        <div className={`locs-header${visible ? ' is-visible' : ''}`}>
+          <h2 className="locs-h2">New York City, NY | CBD Kratom</h2>
+          <p className="locs-sub">Browse store details, hours &amp; reviews</p>
+          <span className="locs-count-badge">12 Locations</span>
+        </div>
+
+        <div className="locs-grid">
+          {LOCATIONS.map((loc, i) => (
+            <LocationCard key={loc.name} loc={loc} index={i} visible={visible} />
           ))}
         </div>
       </div>
@@ -380,79 +463,87 @@ function ProductGrid() {
 }
 
 // ─────────────────────────────────────────────
-// SOCIAL PROOF
+// ABOUT
 // ─────────────────────────────────────────────
 
-function SocialProof() {
+function AboutSection() {
   const [ref, visible] = useReveal(0.1)
 
+  const stats = [
+    { num: '12', label: 'Locations', sub: 'Manhattan, Brooklyn & Queens' },
+    { num: '8am–10pm', label: 'Daily', sub: 'Open 7 days a week' },
+    { num: '3rd-Party', label: 'Lab Tested', sub: 'Every product verified' },
+    { num: 'Free', label: 'Delivery', sub: 'Local 9am–9pm + free shipping $100+' },
+  ]
+
   return (
-    <section className="sp-section" ref={ref}>
-      <div
-        className={`sp-inner${visible ? ' is-visible' : ''}`}
-      >
-        <div className="sp-quote-mark">&ldquo;</div>
+    <section className="about-section" ref={ref}>
+      <div className="container">
+        <div className={`about-inner${visible ? ' is-visible' : ''}`}>
+          <p className="about-eyebrow">Your Local CBD &amp; Kratom Destination</p>
+          <h2 className="about-h2">Why New York City Shops at CBD Kratom</h2>
+          <p className="about-body">
+            CBD Kratom is New York City's trusted source for <strong>CBD, Kratom, Delta-8, Delta-9, and wellness products</strong>.
+            With <strong>12 locations across Manhattan, Brooklyn, and Queens</strong> — including SoHo, Chelsea, Flatiron, Times Square,
+            NoHo, Upper East Side, Upper West Side, Lenox Hill, Financial District, Downtown Brooklyn, Williamsburg, and Forest Hills
+            — there's always a store in your neighborhood.
+          </p>
+          <p className="about-body">
+            Every location carries capsules, powder, edibles, tinctures, vapes, topicals, beverages, and CBD for pets.
+            All products are <strong>3rd-party lab tested</strong>. Most stores open <strong>8am to 10pm</strong> with local
+            delivery 9am–9pm and free shipping on orders over $100.
+          </p>
 
-        <div className="sp-stars">
-          <StarRating />
+          <div className="about-stats">
+            {stats.map((s) => (
+              <div key={s.label} className="about-stat">
+                <p className="about-stat-num">{s.num}</p>
+                <p className="about-stat-label">{s.label}</p>
+                <p className="about-stat-sub">{s.sub}</p>
+              </div>
+            ))}
+          </div>
+
+          <a href="https://shopcbdkratom.com/collections/all" target="_blank" rel="noopener noreferrer" className="btn-green-outline">
+            Shop All Products →
+          </a>
         </div>
-
-        <blockquote className="sp-quote">
-          I took a break from ordering, but coming back to CBD Kratom reminded
-          me why I loved them. The quality is unmatched and shipping to Brooklyn
-          was incredibly fast!
-        </blockquote>
-
-        <footer className="sp-footer">
-          <p className="sp-author">— Sarah T., New York</p>
-          <span className="sp-verified">
-            <span className="sp-check">✓</span> Verified Customer
-          </span>
-        </footer>
       </div>
     </section>
   )
 }
 
 // ─────────────────────────────────────────────
-// BOTTOM CTA
+// FAQ
 // ─────────────────────────────────────────────
 
-function BottomCTA() {
-  const [ref, visible] = useReveal(0.1)
-
+function FaqItem({ faq }) {
+  const [open, setOpen] = useState(false)
   return (
-    <section className="bcta-section" ref={ref}>
-      <div className="bcta-noise" />
-      <div className="bcta-radial" />
+    <div className={`faq-item${open ? ' faq-item--open' : ''}`}>
+      <button className="faq-q" onClick={() => setOpen(o => !o)} aria-expanded={open}>
+        <span>{faq.q}</span>
+        <span className="faq-icon" aria-hidden="true">{open ? '−' : '+'}</span>
+      </button>
+      {open && <div className="faq-a"><p>{faq.a}</p></div>}
+    </div>
+  )
+}
 
-      <div className={`bcta-inner${visible ? ' is-visible' : ''}`}>
-        <div className="bcta-badge">Limited Time Offer</div>
-
-        <h2 className="bcta-h2">
-          Ready to Pick Up
-          <br />Where You Left Off?
+function FaqSection() {
+  const [ref, visible] = useReveal(0.1)
+  return (
+    <section className="faq-section" ref={ref}>
+      <div className="container">
+        <h2 className={`faq-h2${visible ? ' is-visible' : ''}`}>
+          Frequently Asked Questions — NYC
         </h2>
-
-        <p className="bcta-body">
-          Your exclusive winback discount is waiting. Claim your{' '}
-          <strong>20% off</strong> before this offer expires.
+        <p className={`faq-sub${visible ? ' is-visible' : ''}`}>
+          Everything you need to know about shopping CBD and Kratom at our New York City locations.
         </p>
-
-        <a
-          href="https://shopcbdkratom.com/collections"
-          className="btn-gold btn-gold--large"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Claim My Discount &amp; Shop Now
-          <span className="btn-arrow">→</span>
-        </a>
-
-        <p className="bcta-note">
-          Use code <strong>NYBACK20</strong> at checkout &nbsp;·&nbsp; Free
-          shipping on orders $100+
-        </p>
+        <div className={`faq-list${visible ? ' is-visible' : ''}`}>
+          {FAQS.map(f => <FaqItem key={f.q} faq={f} />)}
+        </div>
       </div>
     </section>
   )
@@ -466,27 +557,27 @@ function Footer() {
   return (
     <footer className="footer">
       <div className="footer-inner">
-        <div className="footer-brand">
-          <svg width="22" height="22" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-            <path d="M14 2C14 2 6 8 6 16C6 20.4183 9.58172 24 14 24C18.4183 24 22 20.4183 22 16C22 8 14 2 14 2Z" fill="#4A7C54"/>
-            <path d="M14 8C14 8 9 12 9 17C9 19.7614 11.2386 22 14 22C16.7614 22 19 19.7614 19 17C19 12 14 8 14 8Z" fill="#C9A84C" opacity="0.7"/>
-          </svg>
-          <span className="footer-logo-text">CBD Kratom</span>
-        </div>
-
+        <a href="https://shopcbdkratom.com" target="_blank" rel="noopener noreferrer">
+          <img
+            src="https://shopcbdkratom.com/cdn/shop/files/logo-white.png?v=1716393204&width=400"
+            alt="CBD Kratom"
+            className="footer-logo"
+          />
+        </a>
         <p className="footer-legal">
-          © {new Date().getFullYear()} CBD Kratom. All rights reserved. These
-          products are not intended to diagnose, treat, cure, or prevent any
-          disease. Must be 21+ to purchase. Offer valid while supplies last.
-          Cannot be combined with other offers.
+          © {new Date().getFullYear()} CBD Kratom. All rights reserved.&nbsp;
+          Valid in-store only at participating NYC locations. One redemption per customer.
+          Cannot be combined with other offers. Must be 21+.
         </p>
-
-        <nav className="footer-links" aria-label="Footer links">
-          <a href="https://shopcbdkratom.com/pages/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
-          <span className="footer-divider" aria-hidden="true">·</span>
-          <a href="https://shopcbdkratom.com/pages/terms-of-service" target="_blank" rel="noopener noreferrer">Terms of Service</a>
-          <span className="footer-divider" aria-hidden="true">·</span>
-          <a href="https://shopcbdkratom.com/pages/shipping-policy" target="_blank" rel="noopener noreferrer">Shipping Policy</a>
+        <nav className="footer-links">
+          {[
+            ['Privacy Policy', 'https://shopcbdkratom.com/pages/privacy-policy'],
+            ['Terms of Service', 'https://shopcbdkratom.com/pages/terms-of-service'],
+            ['Shipping Policy', 'https://shopcbdkratom.com/pages/shipping-policy'],
+            ['Shop Online', 'https://shopcbdkratom.com/collections/all'],
+          ].map(([label, href]) => (
+            <a key={label} href={href} target="_blank" rel="noopener noreferrer" className="footer-link">{label}</a>
+          ))}
         </nav>
       </div>
     </footer>
@@ -494,7 +585,7 @@ function Footer() {
 }
 
 // ─────────────────────────────────────────────
-// APP ROOT
+// APP
 // ─────────────────────────────────────────────
 
 export default function App() {
@@ -502,11 +593,11 @@ export default function App() {
     <div className="page">
       <AnnouncementBar />
       <Nav />
-      <HeroWinback />
-      <ValueProps />
-      <ProductGrid />
-      <SocialProof />
-      <BottomCTA />
+      <Hero />
+      <BarcodeSection />
+      <LocationsSection />
+      <AboutSection />
+      <FaqSection />
       <Footer />
     </div>
   )
